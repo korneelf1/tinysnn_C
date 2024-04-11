@@ -3,8 +3,10 @@
 // Include child structs
 #include "test_connection_conf_hidout.h"
 #include "test_connection_conf_inhid.h"
-#include "test_neuron_conf_hid.h"
-#include "test_neuron_conf_out.h"
+#include "test_connection_conf_hidhid.h"
+#include "test_lif_conf_1.h"
+#include "test_lif_conf_2.h"
+#include "test_lif_conf_3.h"
 
 // Place cell centers as const array here, use pointer in configuration struct
 float const centers[] = {0.2f, 0.4f};

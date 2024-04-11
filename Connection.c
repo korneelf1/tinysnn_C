@@ -14,6 +14,8 @@ Connection build_connection(int const post, int const pre) {
 
   // Allocate memory for weight array
   c.w = calloc(post * pre, sizeof(*c.w));
+  // Allocate memory for bias array
+  c.b = calloc(post, sizeof(*c.b));
 
   return c;
 }
@@ -48,6 +50,10 @@ void load_connection_from_header(Connection *c, ConnectionConf const *conf) {
       c->w[i * c->pre + j] = conf->w[i * c->pre + j];
     }
   }
+  // Loop over biases
+  for (int i = 0; i < c->post; i++) {
+    c->b[i] = conf->b[i];
+  }
 }
 
 // Free allocated memory for connection
@@ -65,5 +71,7 @@ void forward_connection(Connection *c, float x[], float const s[]) {
     for (int j = 0; j < c->pre; j++) {
       x[i] += c->w[i * c->pre + j] * s[j];
     }
+    // Add bias
+    x[i] += c->b[i];
   }
 }

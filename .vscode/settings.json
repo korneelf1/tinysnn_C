@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "test_neuron_conf_out.h": "c",
+        "test_lif_conf_2.h": "c"
+    }
+}

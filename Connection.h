@@ -9,6 +9,7 @@ typedef struct Connection {
   // TODO: is this the best way to go? Would like to be able to do w[i][j]
   //  Check this with Erik
   float *w;
+  float *b;
 } Connection;
 
 // Struct that holds the configuration (weights) of a connection
@@ -19,6 +20,7 @@ typedef struct ConnectionConf {
   // Connection weights (1D array)
   // TODO: or actual weight array? Might be easier to specify in conf header..
   float const *w;
+  float const *b;
 } ConnectionConf;
 
 // Build connection
