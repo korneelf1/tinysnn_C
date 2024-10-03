@@ -24,8 +24,8 @@ int main() {
   printf("Pre spikes:\n");
   print_array_1d_bool(c.pre, s);
   // Print connection weights
-  printf("Connection weights:\n");
-  print_array_2d(post, pre, c.w);
+  // printf("Connection weights:\n");
+  // print_array_d(post, pre, c.w);
   // Print post inputs
   printf("Post inputs:\n");
   print_array_1d(c.post, x);

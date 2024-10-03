@@ -75,3 +75,4 @@ void forward_connection(Connection *c, float x[], float const s[]) {
     x[i] += c->b[i];
   }
 }
+

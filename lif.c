@@ -10,8 +10,8 @@ lif build_lif(int const size){
     // lif.thresholds = thresholds;
     // lif.bias = bias;
     // lif.weights = weights;
-    lif.beta = malloc(size * sizeof(*lif.beta));
-    lif.thresholds = malloc(size * sizeof(*lif.thresholds));
+    lif.beta = calloc(size , sizeof(*lif.beta)); // was malloc
+    lif.thresholds = calloc(size , sizeof(*lif.thresholds));// was malloc
     // lif.bias = malloc(out_size * sizeof(*lif.bias));
     // lif.weights = malloc(in_size*out_size * sizeof(*lif.weights));
 
@@ -45,7 +45,6 @@ float* update_lif(lif* neuron, float* input) {
 
 void destroy_lif(lif* neuron) {
     free(neuron->states);
-    free(neuron->size);
     free(neuron->beta);
     free(neuron->thresholds);
 
@@ -56,8 +55,12 @@ void destroy_lif(lif* neuron) {
 void load_lif_from_conf(lif *neuron, lif_conf const *conf){
     neuron->size = conf->size;
     // neuron->out_size = conf->out_size;
-    neuron->beta = conf->beta;
-    neuron->thresholds = conf->thresholds;
+    for (int i=0;i<neuron->size;i++){
+        neuron->beta[i] = conf->beta[i];
+        neuron->thresholds[i] = conf->thresholds[i];
+    }
+    // neuron->beta = conf->beta;
+    // neuron->thresholds = conf->thresholds;
 //     neuron->bias = conf->bias;
 //     neuron->weights = conf->weights;
 };

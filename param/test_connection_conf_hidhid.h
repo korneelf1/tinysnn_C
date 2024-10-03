@@ -232,4 +232,4 @@ float const b_hidhid[] = {0.1867, -0.1613, -0.2832, -0.0997, -0.2014,  0.0764, -
          0.2219,  0.1539, -0.0967,  0.0219,  0.3188, -0.0227, -1.8810, -0.4041};
 
 // post, pre, w
-ConnectionConf const conf_hidout = {32, 32, w_hidhid, b_hidhid};
+ConnectionConf const conf_hidhid = {32, 32, w_hidhid, b_hidhid};

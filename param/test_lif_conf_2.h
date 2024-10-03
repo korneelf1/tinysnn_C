@@ -10,4 +10,4 @@ float const th_2[] = {0.2733, 0.8881, 0.9990, 0.1113, 0.9040, 0.6091, 0.9756, 0.
         0.3351, 0.4040, 0.3879, 0.5430, 0.3609};
 
 // type, size, a_v, a_th, a_t, d_v, d_th, d_t, v_rest, th_rest
-lif_conf const lif_2 = {32, betas_2, th_2, SLIF};
+lif_conf const conf_hidhidlif = {32, betas_2, th_2, SLIF};
