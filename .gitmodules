@@ -1,0 +1,3 @@
+[submodule "CrazyFlieController/external/crazyflie-firmware"]
+	path = CrazyFlieController/external/crazyflie-firmware
+	url = https://github.com/korneelf1/crazyflie-firmware.git
