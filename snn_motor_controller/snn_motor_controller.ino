@@ -6,7 +6,7 @@
 extern "C" {
 #include "NetworkController_Korneel.h"
 #include "functional.h"
-#include "param/controller/test_actor_conf.h"
+#include "controller/test_actor_conf.h"
 }
 
 // -------------------------- COMMUNICATION DEFINED VARIABLES-----------------------------
@@ -169,7 +169,7 @@ void setup(void) {
 
   //////////////////Initialize controller network
   DEBUG_serial.write("Build network\n");
-  controller = build_network(15, 256, 256, 256, 4);
+  controller = build_network(13, 256, 256,128, 4);
   DEBUG_serial.write("Init network\n");
   init_network(&controller);
 

@@ -1,0 +1,9 @@
+#include "../functional.h"
+#include "../Connection.h"
+  
+// Weights and bias as const array here, use pointer in configuration struct
+float const w_${name}[] = $weights;
+float const b_${name}[] = $bias;
+
+// post, pre, w
+ConnectionConf const conf_${name} = {$input_size, $output_size, w_${name}, b_${name}};
