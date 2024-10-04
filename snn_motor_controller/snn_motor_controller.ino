@@ -55,9 +55,10 @@ float pos_z = 0.0f;
 float vel_body_x = 0.0f;
 float vel_body_y = 0.0f;
 float vel_body_z = 0.0f;
-float roll = 0.0f;
-float pitch = 0.0f;
-float yaw = 0.0f;
+float quat_w = 0.0f;
+float quat_x = 0.0f;
+float quat_y = 0.0f;
+float quat_z = 0.0f;
 float inputs[13] = { pos_x, pos_y, pos_z, vel_body_x, vel_body_y, vel_body_z, quat_w,quat_x,quat_y,quat_z, gyro_x, gyro_y, gyro_z };
 
 ///////////////////////////////////////////////USER DEFINED FCN///////////////////
