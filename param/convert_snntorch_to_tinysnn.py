@@ -87,7 +87,7 @@ if __name__ == "__main__":
             if hasattr(self.model, 'reset'):
                 self.model.reset()
   
-    state_dict = torch.load(f"/Users/korneelvandenberghe/vscode_folders/tinysnn/student_model.pth",map_location=torch.device('cpu'))
+    state_dict = torch.load(f"snowy_space_ship_12_policy_snn_actor_Full_State_2024-10-03 13:40:00.114942_slope_5.pth",map_location=torch.device('cpu'))
     filtered_dict = {}
     keys_to_keep = []
     for name in state_dict.keys():

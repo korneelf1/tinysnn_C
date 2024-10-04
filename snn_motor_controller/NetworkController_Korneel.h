@@ -10,7 +10,7 @@ typedef struct NetworkController_Korneel {
   // Type (1: LIF, 2: InputALIF, ...)
   int type;
   // placeholder for input, hidden and output
-  float *in, *hid_1_in, *hid_2_in, *hid_3_in, *out;
+  float *in, *hid_1_in, *hid_2_in, *hid_3_in, *logits_snn,*out;
   float *outtanh;
   // placeholder for output
 //   float *out;

@@ -29,6 +29,7 @@ NetworkController_Korneel build_network(int const in_size, int const hid1_size, 
   net.hid_1_in = calloc(hid1_size, sizeof(*net.hid_1_in));
   net.hid_2_in = calloc(hid2_size, sizeof(*net.hid_2_in));
   net.hid_3_in = calloc(hid3_size, sizeof(*net.hid_3_in));
+  net.logits_snn = calloc(hid3_size, sizeof(*net.logits_snn));
 
   // neurons
   net.hid_1 = malloc(sizeof(*net.hid_1));
@@ -74,6 +75,9 @@ void init_network(NetworkController_Korneel *net) {
 void reset_network(NetworkController_Korneel *net) {
   for (int i = 0; i < net->out_size; i++) {
     net->out[i] = 0.0f;
+  }
+  for (int i = 0; i < net->hid3_size; i++) {
+    net->logits_snn[i] = 0.0f;
   }
     reset_connection(net->inhid);
     reset_connection(net->hidhid_1);
@@ -139,6 +143,8 @@ void set_network_input(NetworkController_Korneel *net, float inputs[]) {
 // Encoding and decoding inside
 float* forward_network(NetworkController_Korneel *net) {
 //   forward_connection_real(net->inenc, net->enc->x, net->in);
+  // spiking part runs 4 times
+  for (int i = 0; i<4; i++) {
   forward_connection_fast(net->inhid, net->hid_1->x, net->in);
   forward_neuron(net->hid_1);
 //   forward_connection(net->enchid, net->hid->x, net->enc->s);
@@ -146,7 +152,11 @@ float* forward_network(NetworkController_Korneel *net) {
   forward_neuron(net->hid_2);
   forward_connection_fast(net->hidhid_2, net->hid_3->x, net->hid_2->s);
   forward_neuron(net->hid_3);
-  forward_connection_fast(net->hid3out, net->out, net->hid_3->s);
+  for (int i = 0; i < net->hid3_size; i++) {
+    net->logits_snn[i] += net->hid_3->s[i];
+  }
+  }
+  forward_connection_fast(net->logits_snn, net->out, net->hid_3->s);
   
   for (int i = 0; i < net->out_size; i++) {
     net->outtanh[i] = tanh(net->out[i]);

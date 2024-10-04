@@ -58,7 +58,7 @@ float vel_body_z = 0.0f;
 float roll = 0.0f;
 float pitch = 0.0f;
 float yaw = 0.0f;
-float inputs[12] = { pos_x, pos_y, pos_z, vel_body_x, vel_body_y, vel_body_z, roll, pitch, yaw, gyro_x, gyro_y, gyro_z };
+float inputs[13] = { pos_x, pos_y, pos_z, vel_body_x, vel_body_y, vel_body_z, quat_w,quat_x,quat_y,quat_z, gyro_x, gyro_y, gyro_z };
 
 ///////////////////////////////////////////////USER DEFINED FCN///////////////////
 static inline int16_t saturateSignedInt16(float in) {
@@ -79,18 +79,19 @@ void serialParseMessageIn(void) {
 }
 
 void setInputMessage(void) {
-  inputs[0] = myserial_control_in.pos_x;
-  inputs[1] = myserial_control_in.pos_y;
-  inputs[2] = myserial_control_in.pos_z;
-  inputs[3] = myserial_control_in.vel_body_x;
-  inputs[4] = myserial_control_in.vel_body_y;
-  inputs[5] = myserial_control_in.vel_body_z;
-  inputs[6] = myserial_control_in.roll;
-  inputs[7] = myserial_control_in.pitch;
-  inputs[8] = myserial_control_in.yaw;
-  inputs[9] = myserial_control_in.gyro_x;
-  inputs[10] = myserial_control_in.gyro_y;
-  inputs[11] = myserial_control_in.gyro_z;
+  inputs[0]  = myserial_control_in.pos_x;
+  inputs[1]  = myserial_control_in.pos_y;
+  inputs[2]  = myserial_control_in.pos_z;
+  inputs[3]  = myserial_control_in.vel_body_x;
+  inputs[4]  = myserial_control_in.vel_body_y;
+  inputs[5]  = myserial_control_in.vel_body_z;
+  inputs[6]  = myserial_control_in.quat_w;
+  inputs[7]  = myserial_control_in.quat_x;
+  inputs[8]  = myserial_control_in.quat_y;
+  inputs[9]  = myserial_control_in.quat_z;
+  inputs[10] = myserial_control_in.gyro_x;
+  inputs[11] = myserial_control_in.gyro_y;
+  inputs[12] = myserial_control_in.gyro_z;
 
   // inputs = [gyro_x, gyro_y, gyro_z, acc_x, acc_y, acc_z, roll_target, pitch_target];
   // DEBUG_serial.printf("%f, %f, %f, %f, %f, %f, %f, %f\n", inputs[0], inputs[1], inputs[2], inputs[3], inputs[4], inputs[5], inputs[6], inputs[7]);
@@ -221,6 +222,7 @@ void loop(void) {
     // Forward network
     timer_network = 0;
     forward_network(&controller);
+    reset_network(&controller);
     timer_network_outer = timer_network_outer + timer_network;
     n_forward_passes++;
     timer_network = 0;
