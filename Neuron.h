@@ -68,6 +68,9 @@ void load_neuron_from_header(Neuron *n, NeuronConf const *conf);
 // Forward
 void forward_neuron(Neuron *n);
 
+// Backward
+void backward_neuron(Neuron *n);
+
 // update threshold based on threshold state and base threshold
 void update_thresholds(Neuron *n);
 

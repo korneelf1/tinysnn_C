@@ -126,6 +126,7 @@ def create_neuron_from_template(name, state_dict, state_name, sigmoid=False, mas
 def create_snntorch_neuron_from_template(name, state_dict, state_name, sigmoid=False, mask=None):
     # if mask is None:
     hidden_size = state_dict[f"{state_name}.beta"].size()[0]
+    print(hidden_size)
     # else:
     #     hidden_size = state_dict[f"{state_name}.leak_i"].size()[0] - sum(mask==0)
     d_i_string = '{'

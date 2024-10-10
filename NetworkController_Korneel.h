@@ -6,11 +6,11 @@
 // Struct that defines a network of two spiking layers
 typedef struct NetworkController_Korneel {
   // Input, hidden and output layer sizes
-  int in_size, hid1_size, hid2_size, hid3_size, out_size;
+  int in_size, hid1_size, hid2_size, out_size;
   // Type (1: LIF, 2: InputALIF, ...)
   int type;
   // placeholder for input, hidden and output
-  float *in, *hid_1_in, *hid_2_in, *hid_3_in, *out;
+  float *in, *hid_1_in, *hid_2_in, *out;
   float *outtanh;
   // placeholder for output
 //   float *out;
@@ -22,14 +22,11 @@ typedef struct NetworkController_Korneel {
   Neuron *hid_1;
   // Recurrent connection hidden 1 -> hidden 2
   Connection *hidhid_1;
+
   // Hidden neurons
   Neuron *hid_2;
-  // Connection hidden 2 -> hidden 3
-  Connection *hidhid_2;
-  // Hidden neurons
-  Neuron *hid_3;
   // Connection hidden 3 -> out
-  Connection *hid3out;
+  Connection *hidout;
 
 
 } NetworkController_Korneel;
@@ -38,7 +35,7 @@ typedef struct NetworkController_Korneel {
 // To be used when loading parameters from a header file
 typedef struct NetworkControllerConf_Korneel {
     // Input, hidden and output layer sizes
-    int const in_size, hid1_size, hid2_size, hid3_size, out_size;
+    int const in_size, hid1_size, hid2_size, out_size;
     // Type
     int const type;
     // Connection encoding -> hidden
@@ -50,15 +47,11 @@ typedef struct NetworkControllerConf_Korneel {
     // Hidden neurons
     NeuronConf const *hid_2;
     // Connection hidden 2 -> hidden 3
-    ConnectionConf const *hidhid_2;
-    // Hidden neurons
-    NeuronConf const *hid_3;
-    // Connection hidden 3 -> out
-    ConnectionConf const *hid3out;
+    ConnectionConf const *hidout;
 } NetworkControllerConf_Korneel;
 
 // Build network: calls build functions for children
-NetworkController_Korneel build_network(int const in_size, int const hid1_size, int const hid2_size, int const hid3_size, int const out_size);
+NetworkController_Korneel build_network(int const in_size, int const hid1_size, int const hid2_size, int const out_size);
 
 // Init network: calls init functions for children
 void init_network(NetworkController_Korneel *net);

@@ -52,14 +52,22 @@ float gyro_z = 0.0f;
 float pos_x = 0.0f;
 float pos_y = 0.0f;
 float pos_z = 0.0f;
-float vel_body_x = 0.0f;
-float vel_body_y = 0.0f;
-float vel_body_z = 0.0f;
-float quat_w = 0.0f;
-float quat_x = 0.0f;
-float quat_y = 0.0f;
-float quat_z = 0.0f;
-float inputs[13] = { pos_x, pos_y, pos_z, vel_body_x, vel_body_y, vel_body_z, quat_w,quat_x,quat_y,quat_z, gyro_x, gyro_y, gyro_z };
+float vel_x = 0.0f;
+float vel_y = 0.0f;
+float vel_z = 0.0f;
+float orient_1 = 0.0f;
+float orient_2 = 0.0f;
+float orient_3 = 0.0f;
+float orient_4 = 0.0f;
+float orient_5 = 0.0f;
+float orient_6 = 0.0f;
+float orient_7 = 0.0f;
+float orient_8 = 0.0f;
+float orient_9 = 0.0f;
+
+
+
+float inputs[18] = {pos_x, pos_y, pos_z,orient_1, orient_2, orient_3, orient_4, orient_5, orient_6, orient_7, orient_8, orient_9, vel_x, vel_y, vel_z, gyro_x, gyro_y, gyro_z };
 
 ///////////////////////////////////////////////USER DEFINED FCN///////////////////
 static inline int16_t saturateSignedInt16(float in) {
@@ -83,16 +91,22 @@ void setInputMessage(void) {
   inputs[0]  = myserial_control_in.pos_x;
   inputs[1]  = myserial_control_in.pos_y;
   inputs[2]  = myserial_control_in.pos_z;
-  inputs[3]  = myserial_control_in.vel_body_x;
-  inputs[4]  = myserial_control_in.vel_body_y;
-  inputs[5]  = myserial_control_in.vel_body_z;
-  inputs[6]  = myserial_control_in.quat_w;
-  inputs[7]  = myserial_control_in.quat_x;
-  inputs[8]  = myserial_control_in.quat_y;
-  inputs[9]  = myserial_control_in.quat_z;
-  inputs[10] = myserial_control_in.gyro_x;
-  inputs[11] = myserial_control_in.gyro_y;
-  inputs[12] = myserial_control_in.gyro_z;
+  inputs[3]  = myserial_control_in.orient_1;
+  inputs[4]  = myserial_control_in.orient_2;
+  inputs[5]  = myserial_control_in.orient_3;
+  inputs[6]  = myserial_control_in.orient_4;
+  inputs[7]  = myserial_control_in.orient_5;
+  inputs[8]  = myserial_control_in.orient_6;
+  inputs[9]  = myserial_control_in.orient_7;
+  inputs[10] = myserial_control_in.orient_8;
+  inputs[11] = myserial_control_in.orient_9;
+  inputs[12] = myserial_control_in.vel_x;
+  inputs[13] = myserial_control_in.vel_y;
+  inputs[14] = myserial_control_in.vel_z;
+  inputs[15] = myserial_control_in.gyro_x;
+  inputs[16] = myserial_control_in.gyro_y;
+  inputs[17] = myserial_control_in.gyro_z;
+
 
   // inputs = [gyro_x, gyro_y, gyro_z, acc_x, acc_y, acc_z, roll_target, pitch_target];
   // DEBUG_serial.printf("%f, %f, %f, %f, %f, %f, %f, %f\n", inputs[0], inputs[1], inputs[2], inputs[3], inputs[4], inputs[5], inputs[6], inputs[7]);
@@ -171,7 +185,7 @@ void setup(void) {
 
   //////////////////Initialize controller network
   DEBUG_serial.write("Build network\n");
-  controller = build_network(13, 256, 256,128, 4);
+  controller = build_network(18, 256,128, 4);
   DEBUG_serial.write("Init network\n");
   init_network(&controller);
 
@@ -223,7 +237,7 @@ void loop(void) {
     // Forward network
     timer_network = 0;
     forward_network(&controller);
-    reset_network(&controller);
+    // reset_network(&controller);
     timer_network_outer = timer_network_outer + timer_network;
     n_forward_passes++;
     timer_network = 0;
