@@ -114,10 +114,10 @@ void setInputMessage(void) {
 }
 
 void setOutputMessage(void) {
-  myserial_control_out.motor_1 = saturateSignedInt16(controller.out[0]);
-  myserial_control_out.motor_2 = saturateSignedInt16(controller.out[1]);
-  myserial_control_out.motor_3 = saturateSignedInt16(controller.out[2]);
-  myserial_control_out.motor_4 = saturateSignedInt16(controller.out[3]);
+  myserial_control_out.motor_1 = controller.out[0];
+  myserial_control_out.motor_2 = controller.out[1];
+  myserial_control_out.motor_3 = controller.out[2];
+  myserial_control_out.motor_4 = controller.out[3];
 }
 
 void sendCrazyflie(void) {
