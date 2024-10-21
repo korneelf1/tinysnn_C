@@ -88,6 +88,7 @@ void serialParseMessageIn(void) {
 }
 
 void setInputMessage(void) {
+  DEBUG_serial.printf("posx: %f\ngyrox: %f\n",myserial_control_in.pos_x, myserial_control_in.gyro_x);
   inputs[0]  = myserial_control_in.pos_x;
   inputs[1]  = myserial_control_in.pos_y;
   inputs[2]  = myserial_control_in.pos_z;
@@ -114,10 +115,10 @@ void setInputMessage(void) {
 }
 
 void setOutputMessage(void) {
-  myserial_control_out.motor_1 = controller.out[0];
-  myserial_control_out.motor_2 = controller.out[1];
-  myserial_control_out.motor_3 = controller.out[2];
-  myserial_control_out.motor_4 = controller.out[3];
+  myserial_control_out.motor_1 = controller.outtanh[0];
+  myserial_control_out.motor_2 = controller.outtanh[1];
+  myserial_control_out.motor_3 = controller.outtanh[2];
+  myserial_control_out.motor_4 = controller.outtanh[3];
 }
 
 void sendCrazyflie(void) {
@@ -204,8 +205,9 @@ void setup(void) {
 
 ///////////////////////////////////////////////////////////LOOP///////////////////
 void loop(void) {
+  // DEBUG_serial.write("ALIVE\n");
   if (receiving) {
-    // DEBUG_serial.write("receiving...");
+    // DEBUG_serial.write("receiving...\n");
     receiveCrazyflie();
   } else if (sending) {
     // Timer for debugging
@@ -215,7 +217,7 @@ void loop(void) {
       DEBUG_serial.printf("Amounts to %i per inference\n", timer_network_outer / n_forward_passes);
       DEBUG_serial.printf("Receiving took %i ms for %i forward passes\n", timer_receive_outer / 1000, n_forward_passes);
       DEBUG_serial.printf("Sending took %i ms for %i forward passes\n", timer_send_outer / 1000, n_forward_passes);
-      DEBUG_serial.printf("Last control output x:%d, y:%d, z:%d\n", myserial_control_out.motor_1, myserial_control_out.motor_2, myserial_control_out.motor_3);
+      DEBUG_serial.printf("Last control output x:%f, y:%f, z:%f\n", myserial_control_out.motor_1, myserial_control_out.motor_2, myserial_control_out.motor_3);
       // DEBUG_serial.printf("CPU temp is %f\n", tempmonGetTemp());
       serial_cf_received_packets = 0;
       timer_count_main = 0;

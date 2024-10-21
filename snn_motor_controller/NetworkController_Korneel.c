@@ -39,6 +39,7 @@ NetworkController_Korneel build_network(int const in_size, int const hid1_size, 
   net.hidout = malloc(sizeof(*net.hidout));
 
   net.out = calloc(out_size, sizeof(*net.out));
+  net.outtanh = calloc(out_size, sizeof(*net.outtanh));
 
   // Call build functions for underlying neurons and connections
   *net.inhid = build_connection(in_size, hid1_size);
@@ -67,6 +68,7 @@ void init_network(NetworkController_Korneel *net) {
 void reset_network(NetworkController_Korneel *net) {
   for (int i = 0; i < net->out_size; i++) {
     net->out[i] = 0.0f;
+    net->outtanh[i] = 0.0f;
   }
   for (int i = 0; i < net->hid2_size; i++) {
     net->logits_snn[i] = 0.0f;
@@ -149,8 +151,10 @@ float* forward_network(NetworkController_Korneel *net) {
   // forward_connection_fast(net->logits_snn, net->out, net->hid_3->s);
   
   for (int i = 0; i < net->out_size; i++) {
-    net->outtanh[i] = tanh(net->out[i]);
+    net->outtanh[i] = (float)tanh(net->out[i]);
+    net->out[i] = 0.0f;
   }
+
   return net->outtanh;
 }
 
