@@ -87,6 +87,7 @@ if __name__ == "__main__":
                 self.model.reset()
   
     state_dict = torch.load(f"TD3BC_TEMP.pth",map_location=torch.device('cpu'))
+    # create model
     filtered_dict = {}
     keys_to_keep = []
     for name in state_dict.keys():
