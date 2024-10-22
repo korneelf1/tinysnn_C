@@ -20,7 +20,7 @@ NetworkController_Korneel build_network(int const in_size, int const hid1_size, 
   net.out_size = out_size;
 
   // Initialize type as LIF
-  net.type = 1;
+  net.type = 2;
 
   // Allocate memory for input placeholders and underlying
   // neurons and connections
