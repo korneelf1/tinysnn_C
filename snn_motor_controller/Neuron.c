@@ -125,11 +125,11 @@ void forward_neuron(Neuron *n) {
         n->x[i] = 0.0f;
         // update voltage
         n->v[i] = (n->v[i] - n->v_rest) * n->d_v[i] + n->i[i];
-        if (n->type == 2) {
-            if (n->v[i] < 0.0f) {
-                n->v[i] = 0.0f;
-            }
-        }
+        // if (n->type == 2) {
+        //     if (n->v[i] < 0.0f) {
+        //         n->v[i] = 0.0f;
+        //     }
+        // }
         // check for spike, possibly reset membrane potential and update spike count
         if (n->v[i] > n->th[i]) {
             // print threshold
