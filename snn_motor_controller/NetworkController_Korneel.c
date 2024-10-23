@@ -20,7 +20,7 @@ NetworkController_Korneel build_network(int const in_size, int const hid1_size, 
   net.out_size = out_size;
 
   // Initialize type as LIF
-  net.type = 2;
+  net.type = 3;
 
   // Allocate memory for input placeholders and underlying
   // neurons and connections
@@ -137,11 +137,14 @@ float* forward_network(NetworkController_Korneel *net) {
 //   forward_connection_real(net->inenc, net->enc->x, net->in);
   // spiking part runs 4 times
   // for (int i = 0; i<4; i++) {
+  // forward_connection_real(net->inhid, net->hid_1->x, net->in);
   forward_connection_fast(net->inhid, net->hid_1->x, net->in);
   forward_neuron(net->hid_1);
 //   forward_connection(net->enchid, net->hid->x, net->enc->s);
+  // forward_connection_real(net->hidhid_1, net->hid_2->x, net->hid_1->s);
   forward_connection_fast(net->hidhid_1, net->hid_2->x, net->hid_1->s);
   forward_neuron(net->hid_2);
+  // forward_connection_real(net->hidout, net->out, net->hid_2->s);
   forward_connection_fast(net->hidout, net->out, net->hid_2->s);
   // forward_neuron(net->hid_3);
   // for (int i = 0; i < net->hid3_size; i++) {
@@ -149,7 +152,7 @@ float* forward_network(NetworkController_Korneel *net) {
   // }
   // }
   // forward_connection_fast(net->logits_snn, net->out, net->hid_3->s);
-  
+  // printf("Output before tanh");
   for (int i = 0; i < net->out_size; i++) {
     net->outtanh[i] = (float)tanh(net->out[i]);
     net->out[i] = 0.0f;

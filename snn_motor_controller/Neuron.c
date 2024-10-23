@@ -12,8 +12,8 @@ Neuron build_neuron(int const size) {
   // Set size
   n.size = size;
 
-  // Set type (default is hard-reset)
-  n.type = 1;
+  // Set type (default is snntorch leaky)
+  n.type = 3;
 
   // Allocate memory for arrays: inputs, current, voltage, threshold, spikes, trace
   // No need for type casting
@@ -119,17 +119,24 @@ void update_thresholds(Neuron *n) {
 void forward_neuron(Neuron *n) {
     // iteratively process all neurons
     for (int i = 0; i < n->size; i++) {
-        // update current
-        n->i[i] = n->i[i] * n->d_i[i] + n->x[i];
-        // reset input
-        n->x[i] = 0.0f;
-        // update voltage
-        n->v[i] = (n->v[i] - n->v_rest) * n->d_v[i] + n->i[i];
-        // if (n->type == 2) {
-        //     if (n->v[i] < 0.0f) {
-        //         n->v[i] = 0.0f;
-        //     }
-        // }
+        // update current and voltage
+        if (n->type == 3) { // SNNTORCH LEAKY with delayed reset!
+            // delayed reset
+            n->v[i] = n->v[i] * n->d_v[i] + n->x[i] - n->s[i] * n->th[i];
+            // reset input
+            n->x[i] = 0.0f;
+        } else {
+            n->i[i] = n->i[i] * n->d_i[i] + n->x[i];
+            // reset input
+            n->x[i] = 0.0f;
+            // update voltage
+            n->v[i] = (n->v[i] - n->v_rest) * n->d_v[i] + n->i[i];
+            if (n->type == 2) {
+                if (n->v[i] < 0.0f) {
+                    n->v[i] = 0.0f;
+                }
+            }
+        }
         // check for spike, possibly reset membrane potential and update spike count
         if (n->v[i] > n->th[i]) {
             // print threshold
@@ -138,7 +145,7 @@ void forward_neuron(Neuron *n) {
                 n->v[i] = n->v_rest;
             } else if (n->type == 2) {
                 n->v[i] = n->v[i] - n->th[i];
-            }
+            } 
         } else {
             n->s[i] = 0.0f;
         }
