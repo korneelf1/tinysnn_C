@@ -50,21 +50,6 @@ def SpikingNet_Tianshou_to_TinySNN(state_dict):
     ################### test_actor_hidh3out_file
     create_connection_from_template('hidout', state_dict, 'actor.mu.model.0.weight','actor.mu.model.0.bias')
 
-    ################### test_actor_hidhid3_file
-    # ################### test_actor_hidinteg_file
-    # N = actor_conf_params['hidden_size']
-    # M = actor_conf_params['output_size']
-    # new_weights = torch.zeros([N, M])
-    # integ_weights = torch.tensor([[1, 0, -5, 0], 
-    #                               [-1, 0, 5, 0],
-    #                               [0, 1, 0, 5],
-    #                               [0, -1, 0,-5]], dtype=torch.float) * 0.003
-    # new_weights = torch.mm(integ_weights, state_dict['actor.fc3.weight'])
-    # create_connection_from_template_with_weights('hidinteg', new_weights)
-
-    # ################### test_actor_integ_file
-    # create_softreset_integrator_from_template('integ', actor_conf_params['hidden_size'])
-
     print("Done")
 
 if __name__ == "__main__": 

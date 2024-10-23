@@ -113,7 +113,7 @@ def create_neuron_from_template(name, state_dict, state_name, sigmoid=False, mas
     params = {
         'name': name,
         'hidden_size': f'{hidden_size}',
-        'type': '1',
+        'type': '3',
         'd_i': f"{d_i_string}",
         'd_v': f"{d_v_string}",
         'th': f"{t_h_string}",
@@ -142,8 +142,8 @@ def create_snntorch_neuron_from_template(name, state_dict, state_name, sigmoid=F
             leak_i = torch.sigmoid(leak_i)
             leak_v = torch.sigmoid(leak_v)
         else:
-            leak_i = torch.clamp(leak_i, 0.0, 1.0)
-            leak_v = torch.clamp(leak_v, 0.0, 1.0)
+            leak_i = torch.clamp(leak_i, .0, 1.0)
+            leak_v = torch.clamp(leak_v, .0, 1.0)
         leak_i = leak_i.item()
         leak_v = leak_v.item()
         th = state_dict[f"{state_name}.threshold"][i]
@@ -158,7 +158,7 @@ def create_snntorch_neuron_from_template(name, state_dict, state_name, sigmoid=F
     params = {
         'name': name,
         'hidden_size': f'{hidden_size}',
-        'type': '2',
+        'type': '3',
         'd_i': f"{d_i_string}",
         'd_v': f"{d_v_string}",
         'th': f"{t_h_string}",
@@ -187,7 +187,7 @@ def create_softreset_integrator_from_template(name):
     params = {
         'name': name,
         'hidden_size': f'{hidden_size}',
-        'type': '2',
+        'type': '3',
         'd_i': f"{d_i_string}",
         'd_v': f"{d_v_string}",
         'th': f"{t_h_string}",
