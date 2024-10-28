@@ -1,6 +1,5 @@
 #include "NetworkController_Korneel.h"
 #include "functional.h"
-#include "test_inputs.h"
 #include "controller/test_actor_conf.h"
 
 #include <stdio.h>
@@ -31,9 +30,9 @@ int main() {
   // Build network
   printf("Network built with observation 0.2!\n");
   net = build_network(18, 256,128, 4);
-  // for (int i = 0; i < 18; i++) {
-  //   inputs[i] = 0.0f;
-  // }
+  for (int i = 0; i < 18; i++) {
+    inputs[i] = 0.0f;
+  }
   init_network(&net);
 
 
@@ -41,17 +40,12 @@ int main() {
   load_network_from_header(&net, &conf);
   reset_network(&net);
   // Set input to network
-  
+  set_network_input(&net, inputs);
 
   // Load network parameters from header file
   reset_network(&net);
 
-  for (int j = 0; j < 100; j++) {
-    for (int i = 0; i < 18; i++) {
-      inputs[i] = test_inputs[j*146 + i];
-      // inputs[i] = -0.01f;
-    }
-    set_network_input(&net, inputs);
+  for (int j = 0; j < 250; j++) {
     // Forward network
     forward_network(&net);
     // printf("\nOutput after tanh\n");

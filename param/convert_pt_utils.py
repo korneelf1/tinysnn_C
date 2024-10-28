@@ -147,7 +147,7 @@ def create_snntorch_neuron_from_template(name, state_dict, state_name, sigmoid=F
         leak_i = leak_i.item()
         leak_v = leak_v.item()
         th = state_dict[f"{state_name}.threshold"][i]
-        th = torch.clamp(th, min=0.0).item()
+        # th = torch.clamp(th, min=0.0).item()
         d_i_string += f"{leak_i:4f}f, "
         d_v_string += f"{leak_v:4f}f, "
         t_h_string += f"{th:4f}f, "

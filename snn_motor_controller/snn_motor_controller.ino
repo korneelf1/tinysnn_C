@@ -64,7 +64,7 @@ float orient_6 = 0.0f;
 float orient_7 = 0.0f;
 float orient_8 = 0.0f;
 float orient_9 = 0.0f;
-
+bool warmUp = 0;
 
 
 float inputs[18] = {pos_x, pos_y, pos_z,orient_1, orient_2, orient_3, orient_4, orient_5, orient_6, orient_7, orient_8, orient_9, vel_x, vel_y, vel_z, gyro_x, gyro_y, gyro_z };
@@ -79,7 +79,9 @@ static inline int16_t saturateSignedInt16(float in) {
   else
     return (int16_t)in;
 }
-
+inline float degrees_to_radians(float var){
+  return var /(180.0f/M_PI);
+}
 void serialParseMessageIn(void) {
   //Copy received buffer to structure
   memmove(&myserial_control_in, &serial_cf_msg_buf_in[1], sizeof(struct serial_control_in) - 1);
@@ -88,7 +90,7 @@ void serialParseMessageIn(void) {
 }
 
 void setInputMessage(void) {
-  DEBUG_serial.printf("posx: %f\ngyrox: %f\n",myserial_control_in.pos_x, myserial_control_in.gyro_x);
+  // DEBUG_serial.printf("posx: %f\ngyrox: %f\n",myserial_control_in.pos_x, myserial_control_in.gyro_x);
   inputs[0]  = myserial_control_in.pos_x;
   inputs[1]  = myserial_control_in.pos_y;
   inputs[2]  = myserial_control_in.pos_z;
@@ -104,13 +106,13 @@ void setInputMessage(void) {
   inputs[12] = myserial_control_in.vel_x;
   inputs[13] = myserial_control_in.vel_y;
   inputs[14] = myserial_control_in.vel_z;
-  inputs[15] = myserial_control_in.gyro_x;
-  inputs[16] = myserial_control_in.gyro_y;
-  inputs[17] = myserial_control_in.gyro_z;
+  inputs[15] = degrees_to_radians(myserial_control_in.gyro_x)/(180/M_PI);
+  inputs[16] = degrees_to_radians(myserial_control_in.gyro_y)/(180/M_PI);
+  inputs[17] = degrees_to_radians(myserial_control_in.gyro_z)/(180/M_PI);
 
 
   // inputs = [gyro_x, gyro_y, gyro_z, acc_x, acc_y, acc_z, roll_target, pitch_target];
-  // DEBUG_serial.printf("%f, %f, %f, %f, %f, %f, %f, %f\n", inputs[0], inputs[1], inputs[2], inputs[3], inputs[4], inputs[5], inputs[6], inputs[7]);
+  DEBUG_serial.printf("%f, %f, %f, %f, %f, %f, %f, %f\n", inputs[0], inputs[1], inputs[2], inputs[3], inputs[4], inputs[5], inputs[6], inputs[7]);
   set_network_input(&controller, inputs);
 }
 
@@ -119,6 +121,7 @@ void setOutputMessage(void) {
   myserial_control_out.motor_2 = controller.outtanh[1];
   myserial_control_out.motor_3 = controller.outtanh[2];
   myserial_control_out.motor_4 = controller.outtanh[3];
+  
 }
 
 void sendCrazyflie(void) {
@@ -212,13 +215,16 @@ void loop(void) {
   } else if (sending) {
     // Timer for debugging
     if (timer_count_main > 1000000) {
-      DEBUG_serial.printf("Received %i packets over last second\n", serial_cf_received_packets);
-      DEBUG_serial.printf("Processing network took %i ms for %i forward passes\n", timer_network_outer / 1000, n_forward_passes);
-      DEBUG_serial.printf("Amounts to %i per inference\n", timer_network_outer / n_forward_passes);
-      DEBUG_serial.printf("Receiving took %i ms for %i forward passes\n", timer_receive_outer / 1000, n_forward_passes);
-      DEBUG_serial.printf("Sending took %i ms for %i forward passes\n", timer_send_outer / 1000, n_forward_passes);
-      DEBUG_serial.printf("Last control output x:%f, y:%f, z:%f\n", myserial_control_out.motor_1, myserial_control_out.motor_2, myserial_control_out.motor_3);
+      // DEBUG_serial.printf("Received %i packets over last second\n", serial_cf_received_packets);
+      // DEBUG_serial.printf("Processing network took %i ms for %i forward passes\n", timer_network_outer / 1000, n_forward_passes);
+      // DEBUG_serial.printf("Amounts to %i per inference\n", timer_network_outer / n_forward_passes);
+      // DEBUG_serial.printf("Receiving took %i ms for %i forward passes\n", timer_receive_outer / 1000, n_forward_passes);
+      // DEBUG_serial.printf("Sending took %i ms for %i forward passes\n", timer_send_outer / 1000, n_forward_passes);
+      // DEBUG_serial.printf("Last control output x:%f, y:%f, z:%f\n", myserial_control_out.motor_1, myserial_control_out.motor_2, myserial_control_out.motor_3);
       // DEBUG_serial.printf("CPU temp is %f\n", tempmonGetTemp());
+      DEBUG_serial.printf("Low passed: %f, %f, %f, %f, \n", controller.out[0],controller.out[1],controller.out[2],controller.out[3]);
+      DEBUG_serial.printf("raw passed: %f, %f, %f, %f, \n", controller.outtanh[0],controller.outtanh[1],controller.outtanh[2],controller.outtanh[3]);
+
       serial_cf_received_packets = 0;
       timer_count_main = 0;
       timer_network_outer = 0;
@@ -232,9 +238,9 @@ void loop(void) {
 
     // Reset network if thrust command is zero
     // TODO: Find better solution, otherwise network might be reset mid flight
-    // if (myserial_control_in.thrust == 0.0f) {
-    //  reset_network(&controller);
-//    }
+    if (myserial_control_in.warmUp == true) {
+     reset_network(&controller);
+   };
 
     // Forward network
     timer_network = 0;

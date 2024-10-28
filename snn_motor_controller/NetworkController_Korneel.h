@@ -12,8 +12,9 @@ typedef struct NetworkController_Korneel {
   // placeholder for input, hidden and output
   float *in, *hid_1_in, *hid_2_in, *logits_snn,*out;
   float *outtanh;
-  // placeholder for output
-//   float *out;
+
+  // placeholder for low-passed output
+  float *out_lp;
   
 
   // Connection encoding -> hidden

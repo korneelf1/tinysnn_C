@@ -122,8 +122,10 @@ void forward_neuron(Neuron *n) {
         // update current and voltage
         if (n->type == 3) { // SNNTORCH LEAKY with delayed reset!
             // delayed reset
+
             n->v[i] = n->v[i] * n->d_v[i] + n->x[i] - n->s[i] * n->th[i];
             // reset input
+            // n->s[i] = 0.0f;
             n->x[i] = 0.0f;
         } else {
             n->i[i] = n->i[i] * n->d_i[i] + n->x[i];
@@ -136,10 +138,12 @@ void forward_neuron(Neuron *n) {
                     n->v[i] = 0.0f;
                 }
             }
+            
         }
         // check for spike, possibly reset membrane potential and update spike count
         if (n->v[i] > n->th[i]) {
             // print threshold
+            
             n->s[i] = 1.0f;
             if (n->type == 1) {
                 n->v[i] = n->v_rest;

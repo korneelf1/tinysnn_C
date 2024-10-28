@@ -25,7 +25,7 @@ def SpikingNet_Tianshou_to_TinySNN(state_dict):
         'hidden_size': state_dict["actor.preprocess.model.layer_in.weight"].size()[0],
         'hidden2_size': state_dict["actor.preprocess.model.layer_out.weight"].size()[0],
         'output_size': state_dict["actor.mu.model.0.weight"].size()[0],
-        'type': 1,
+        'type': 3,
     }
     pprint(actor_conf_params)
     actor_conf_template = 'param/templates/test_td3_actor_conf.templ'
@@ -71,7 +71,7 @@ if __name__ == "__main__":
             if hasattr(self.model, 'reset'):
                 self.model.reset()
   
-    state_dict = torch.load(f"TD3BC_TEMP.pth",map_location=torch.device('cpu'))
+    state_dict = torch.load(f"TD3BC_Online_TEMP.pth",map_location=torch.device('cpu'))
     # create model
     filtered_dict = {}
     keys_to_keep = []
