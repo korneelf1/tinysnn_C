@@ -139,8 +139,8 @@ float* forward_network(NetworkController_Korneel *net) {
 //   forward_connection_real(net->inenc, net->enc->x, net->in);
   // spiking part runs 4 times
   // for (int i = 0; i<4; i++) {
-  forward_connection_real(net->inhid, net->hid_1->x, net->in);
-  // forward_connection_fast(net->inhid, net->hid_1->x, net->in);
+  // forward_connection_real(net->inhid, net->hid_1->x, net->in);
+  forward_connection_fast(net->inhid, net->hid_1->x, net->in);
   forward_neuron(net->hid_1);
   
   // printf("\nSize of neuron layer: %d\n", net->hid1_size);
@@ -150,8 +150,8 @@ float* forward_network(NetworkController_Korneel *net) {
   //   printf("%d: %f\t",i, net->hid_1->s[i]);
   // }
   // printf("\n");
-  forward_connection_real(net->hidhid_1, net->hid_2->x, net->hid_1->s);
-  // forward_connection_fast(net->hidhid_1, net->hid_2->x, net->hid_1->s);
+  // forward_connection_real(net->hidhid_1, net->hid_2->x, net->hid_1->s);
+  forward_connection_fast(net->hidhid_1, net->hid_2->x, net->hid_1->s);
   // for (int i = 0; i < 28; i++) {
   //   printf("%d: %f\t",i, net->hid_2->x[i]);
   // }
@@ -161,8 +161,8 @@ float* forward_network(NetworkController_Korneel *net) {
   //   printf("%d: %f\t",i, net->hid_2->s[i]);
   // }
   // printf("\n");
-  forward_connection_real(net->hidout, net->out, net->hid_2->s);
-  // forward_connection_fast(net->hidout, net->out, net->hid_2->s);
+  // forward_connection_real(net->hidout, net->out, net->hid_2->s);
+  forward_connection_fast(net->hidout, net->out, net->hid_2->s);
   // forward_neuron(net->hid_3);
   // for (int i = 0; i < net->hid3_size; i++) {
   //   net->logits_snn[i] += net->hid_3->s[i];

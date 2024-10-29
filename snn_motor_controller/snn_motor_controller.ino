@@ -91,9 +91,12 @@ void serialParseMessageIn(void) {
 
 void setInputMessage(void) {
   // DEBUG_serial.printf("posx: %f\ngyrox: %f\n",myserial_control_in.pos_x, myserial_control_in.gyro_x);
-  inputs[0]  = myserial_control_in.pos_x;
-  inputs[1]  = myserial_control_in.pos_y;
-  inputs[2]  = myserial_control_in.pos_z;
+  // inputs[0]  = myserial_control_in.pos_x;
+  // inputs[1]  = myserial_control_in.pos_y;
+  // inputs[2]  = myserial_control_in.pos_z;
+  inputs[0] = 0.0f;
+  inputs[1] = 0.0f;
+  inputs[2] = 0.0f;
   inputs[3]  = myserial_control_in.orient_1;
   inputs[4]  = myserial_control_in.orient_2;
   inputs[5]  = myserial_control_in.orient_3;
@@ -112,7 +115,7 @@ void setInputMessage(void) {
 
 
   // inputs = [gyro_x, gyro_y, gyro_z, acc_x, acc_y, acc_z, roll_target, pitch_target];
-  DEBUG_serial.printf("%f, %f, %f, %f, %f, %f, %f, %f\n", inputs[0], inputs[1], inputs[2], inputs[3], inputs[4], inputs[5], inputs[6], inputs[7]);
+  // DEBUG_serial.printf("%f, %f, %f, %f, %f, %f, %f, %f\n", inputs[0], inputs[1], inputs[2], inputs[3], inputs[4], inputs[5], inputs[6], inputs[7]);
   set_network_input(&controller, inputs);
 }
 
@@ -215,15 +218,15 @@ void loop(void) {
   } else if (sending) {
     // Timer for debugging
     if (timer_count_main > 1000000) {
-      // DEBUG_serial.printf("Received %i packets over last second\n", serial_cf_received_packets);
-      // DEBUG_serial.printf("Processing network took %i ms for %i forward passes\n", timer_network_outer / 1000, n_forward_passes);
-      // DEBUG_serial.printf("Amounts to %i per inference\n", timer_network_outer / n_forward_passes);
-      // DEBUG_serial.printf("Receiving took %i ms for %i forward passes\n", timer_receive_outer / 1000, n_forward_passes);
-      // DEBUG_serial.printf("Sending took %i ms for %i forward passes\n", timer_send_outer / 1000, n_forward_passes);
-      // DEBUG_serial.printf("Last control output x:%f, y:%f, z:%f\n", myserial_control_out.motor_1, myserial_control_out.motor_2, myserial_control_out.motor_3);
-      // DEBUG_serial.printf("CPU temp is %f\n", tempmonGetTemp());
-      DEBUG_serial.printf("Low passed: %f, %f, %f, %f, \n", controller.out[0],controller.out[1],controller.out[2],controller.out[3]);
-      DEBUG_serial.printf("raw passed: %f, %f, %f, %f, \n", controller.outtanh[0],controller.outtanh[1],controller.outtanh[2],controller.outtanh[3]);
+      DEBUG_serial.printf("Received %i packets over last second\n", serial_cf_received_packets);
+      DEBUG_serial.printf("Processing network took %i ms for %i forward passes\n", timer_network_outer / 1000, n_forward_passes);
+      DEBUG_serial.printf("Amounts to %i per inference\n", timer_network_outer / n_forward_passes);
+      DEBUG_serial.printf("Receiving took %i ms for %i forward passes\n", timer_receive_outer / 1000, n_forward_passes);
+      DEBUG_serial.printf("Sending took %i ms for %i forward passes\n", timer_send_outer / 1000, n_forward_passes);
+      DEBUG_serial.printf("Last control output x:%f, y:%f, z:%f\n", myserial_control_out.motor_1, myserial_control_out.motor_2, myserial_control_out.motor_3);
+      DEBUG_serial.printf("CPU temp is %f\n", tempmonGetTemp());
+      // DEBUG_serial.printf("Low passed: %f, %f, %f, %f, \n", controller.out[0],controller.out[1],controller.out[2],controller.out[3]);
+      // DEBUG_serial.printf("raw passed: %f, %f, %f, %f, \n", controller.outtanh[0],controller.outtanh[1],controller.outtanh[2],controller.outtanh[3]);
 
       serial_cf_received_packets = 0;
       timer_count_main = 0;
