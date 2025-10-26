@@ -29,7 +29,7 @@ float inputs[18];
 // Test network forward functions
 int main() {
   // Build network
-  printf("Network built with observation 0.5!\n");
+  printf("Network built with observation 0.2!\n");
   net = build_network(18, 256,128, 4);
   // for (int i = 0; i < 18; i++) {
   //   inputs[i] = 0.0f;
@@ -48,8 +48,8 @@ int main() {
 
   for (int j = 0; j < 100; j++) {
     for (int i = 0; i < 18; i++) {
-      inputs[i] = test_inputs[j*18 + i];
-      // inputs[i] = -0.5f;
+      inputs[i] = test_inputs[j*146 + i];
+      // inputs[i] = -0.01f;
     }
     set_network_input(&net, inputs);
     // Forward network
