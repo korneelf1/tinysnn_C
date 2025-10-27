@@ -64,19 +64,14 @@ float pos_z = 0.0f;
 float vel_x = 0.0f;
 float vel_y = 0.0f;
 float vel_z = 0.0f;
-float orient_1 = 0.0f;
-float orient_2 = 0.0f;
-float orient_3 = 0.0f;
-float orient_4 = 0.0f;
-float orient_5 = 0.0f;
-float orient_6 = 0.0f;
-float orient_7 = 0.0f;
-float orient_8 = 0.0f;
-float orient_9 = 0.0f;
+float qw = 0.0f;
+float qx = 0.0f;
+float qy = 0.0f;
+float qz = 0.0f;
 bool warmUp = 0;
 
-
-float inputs[18] = {pos_x, pos_y, pos_z,orient_1, orient_2, orient_3, orient_4, orient_5, orient_6, orient_7, orient_8, orient_9, vel_x, vel_y, vel_z, gyro_x, gyro_y, gyro_z };
+// Input array: [pos_x, pos_y, pos_z, orient_1..9 (from quaternion), vel_x, vel_y, vel_z, gyro_x, gyro_y, gyro_z]
+float inputs[18] = {0.0f};
 
 ///////////////////////////////////////////////USER DEFINED FCN///////////////////
 static inline int16_t saturateSignedInt16(float in) {
@@ -100,30 +95,40 @@ void serialParseMessageIn(void) {
 
 void setInputMessage(void) {
   // DEBUG_serial.printf("posx: %f\ngyrox: %f\n",myserial_control_in.pos_x, myserial_control_in.gyro_x);
-  // inputs[0]  = myserial_control_in.pos_x;
-  // inputs[1]  = myserial_control_in.pos_y;
-  // inputs[2]  = myserial_control_in.pos_z;
+  
+  // Set position (zeroed out as before)
   inputs[0] = 0.0f;
   inputs[1] = 0.0f;
   inputs[2] = 0.0f;
-  inputs[3]  = myserial_control_in.orient_1;
-  inputs[4]  = myserial_control_in.orient_2;
-  inputs[5]  = myserial_control_in.orient_3;
-  inputs[6]  = myserial_control_in.orient_4;
-  inputs[7]  = myserial_control_in.orient_5;
-  inputs[8]  = myserial_control_in.orient_6;
-  inputs[9]  = myserial_control_in.orient_7;
-  inputs[10] = myserial_control_in.orient_8;
-  inputs[11] = myserial_control_in.orient_9;
+  
+  // Convert quaternion to rotation matrix
+  // Rotation matrix from quaternion (qw, qx, qy, qz)
+  float qw = myserial_control_in.qw;
+  float qx = myserial_control_in.qx;
+  float qy = myserial_control_in.qy;
+  float qz = myserial_control_in.qz;
+  
+  inputs[3]  = 1.0f - 2.0f*qy*qy - 2.0f*qz*qz;  // orient_1
+  inputs[4]  = 2.0f*qx*qy - 2.0f*qw*qz;          // orient_2
+  inputs[5]  = 2.0f*qx*qz + 2.0f*qw*qy;          // orient_3
+  inputs[6]  = 2.0f*qx*qy + 2.0f*qw*qz;          // orient_4
+  inputs[7]  = 1.0f - 2.0f*qx*qx - 2.0f*qz*qz;  // orient_5
+  inputs[8]  = 2.0f*qy*qz - 2.0f*qw*qx;          // orient_6
+  inputs[9]  = 2.0f*qx*qz - 2.0f*qw*qy;          // orient_7
+  inputs[10] = 2.0f*qy*qz + 2.0f*qw*qx;          // orient_8
+  inputs[11] = 1.0f - 2.0f*qx*qx - 2.0f*qy*qy;  // orient_9
+  
+  // Set velocity
   inputs[12] = myserial_control_in.vel_x;
   inputs[13] = myserial_control_in.vel_y;
   inputs[14] = myserial_control_in.vel_z;
-  inputs[15] = degrees_to_radians(myserial_control_in.gyro_x)/(180/M_PI);
-  inputs[16] = degrees_to_radians(myserial_control_in.gyro_y)/(180/M_PI);
-  inputs[17] = degrees_to_radians(myserial_control_in.gyro_z)/(180/M_PI);
+  
+  // Set gyro (convert from degrees to radians)
+  inputs[15] = degrees_to_radians(myserial_control_in.gyro_x)/(180.0f/M_PI);
+  inputs[16] = degrees_to_radians(myserial_control_in.gyro_y)/(180.0f/M_PI);
+  inputs[17] = degrees_to_radians(myserial_control_in.gyro_z)/(180.0f/M_PI);
 
-
-  // inputs = [gyro_x, gyro_y, gyro_z, acc_x, acc_y, acc_z, roll_target, pitch_target];
+  // inputs = [pos_x, pos_y, pos_z, orient_1...9, vel_x, vel_y, vel_z, gyro_x, gyro_y, gyro_z];
   // DEBUG_serial.printf("%f, %f, %f, %f, %f, %f, %f, %f\n", inputs[0], inputs[1], inputs[2], inputs[3], inputs[4], inputs[5], inputs[6], inputs[7]);
   set_network_input(&controller, inputs);
 }

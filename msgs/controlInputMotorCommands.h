@@ -1,9 +1,29 @@
 struct __attribute__((__packed__)) serial_control_in {
-    float pos_x, pos_y, pos_z;
-    float vel_body_x, vel_body_y, vel_body_z;
-    float gyro_x, gyro_y, gyro_z;
-    float roll, pitch, yaw;
-    //CHECKSUM
+    // Position
+    float pos_x;
+    float pos_y;
+    float pos_z;
+    
+    // Attitude (quaternion)
+    float qw;
+    float qx;
+    float qy;
+    float qz;
+    
+    // Velocity
+    float vel_x;
+    float vel_y;
+    float vel_z;
+    
+    // Gyro
+    float gyro_x;
+    float gyro_y;
+    float gyro_z;
+    
+    // Control flag
+    bool warmUp;
+    
+    // CHECKSUM
     uint8_t checksum_in;
 };
 
