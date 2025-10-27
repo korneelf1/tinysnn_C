@@ -72,7 +72,7 @@ if __name__ == "__main__":
                 self.model.reset()
   
     # state_dict = torch.load(f"TD3BC_Online_TEMP.pth",map_location=torch.device('cpu'))
-    state_dict = torch.load(f"TD3BC_Online_stable.pth",map_location=torch.device('cpu'))
+    state_dict = torch.load(f"TD3BC_Online_balmy_cosmos.pth",map_location=torch.device('cpu'))
     # create model
     filtered_dict = {}
     keys_to_keep = []
