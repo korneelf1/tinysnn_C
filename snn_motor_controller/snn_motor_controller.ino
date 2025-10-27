@@ -134,10 +134,10 @@ void setInputMessage(void) {
 }
 
 void setOutputMessage(void) {
-  myserial_control_out.motor_1 = min(max(-.2,controller.outtanh[0]),.9);
-  myserial_control_out.motor_2 = min(max(-.2,controller.outtanh[1]),.9);
-  myserial_control_out.motor_3 = min(max(-.2,controller.outtanh[2]),.9);
-  myserial_control_out.motor_4 = min(max(-.2,controller.outtanh[3]),.9);
+  myserial_control_out.motor_1 = min(max(-1.0,controller.outtanh[0]),1.0);
+  myserial_control_out.motor_2 = min(max(-1.0,controller.outtanh[1]),1.0);
+  myserial_control_out.motor_3 = min(max(-1.0,controller.outtanh[2]),1.0);
+  myserial_control_out.motor_4 = min(max(-1.0,controller.outtanh[3]),1.0);
   
 }
 
