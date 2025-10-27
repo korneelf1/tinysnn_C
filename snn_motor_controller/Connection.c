@@ -131,7 +131,7 @@ void forward_connection_fast(Connection *c, float x[], float const s[]) {
     // arm_mat_init_f32(&X, c->post, 1, x);
 
     arm_mat_init_f32(&W, c->post, c->pre, c->w);
-    arm_mat_init_f32(&S, c->pre, 1, (float *)s);
+    arm_mat_init_f32(&S, c->pre, 1, s);
     arm_mat_init_f32(&X, c->post, 1, x);
     arm_mat_init_f32(&X_copy, c->post, 1, x_copy);
 
