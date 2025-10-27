@@ -3,10 +3,19 @@
 #include "msgs/controlInputMotorCommands.h"
 #include "msgs/controlOutputMotorCommands.h"
 
+// Switch between different controller versions by changing this define
+// Options: "controller" or "controller_stable_1"
+// #define CONTROLLER_DIR "controller"
+#define CONTROLLER_DIR "controller_stable_1"
+
+#define XSTR(s) STR(s)
+#define STR(s) #s
+#define CONTROLLER_PATH(file) XSTR(CONTROLLER_DIR/file)
+
 extern "C" {
 #include "NetworkController_Korneel.h"
 #include "functional.h"
-#include "controller/test_actor_conf.h"
+#include CONTROLLER_PATH(test_actor_conf.h)
 }
 
 // -------------------------- COMMUNICATION DEFINED VARIABLES-----------------------------
