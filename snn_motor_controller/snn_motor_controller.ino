@@ -39,6 +39,8 @@ elapsedMicros timer_count_main = 0;
 elapsedMicros timer_network = 0;
 elapsedMicros timer_receive = 0;
 elapsedMicros timer_send = 0;
+const unsigned long networkInterval = 10000;  // 10000 microseconds = 10 ms (100 Hz)
+unsigned long previousTime = 0;
 int timer_network_outer = 0;
 int timer_receive_outer = 0;
 int timer_send_outer = 0;
@@ -55,6 +57,10 @@ float pos_z = 0.0f;
 float vel_x = 0.0f;
 float vel_y = 0.0f;
 float vel_z = 0.0f;
+float qw = 0.0f;
+float qx = 0.0f;
+float qy = 0.0f;
+float qz = 0.0f;
 float orient_1 = 0.0f;
 float orient_2 = 0.0f;
 float orient_3 = 0.0f;
@@ -67,7 +73,7 @@ float orient_9 = 0.0f;
 bool warmUp = 0;
 
 
-float inputs[18] = {pos_x, pos_y, pos_z,orient_1, orient_2, orient_3, orient_4, orient_5, orient_6, orient_7, orient_8, orient_9, vel_x, vel_y, vel_z, gyro_x, gyro_y, gyro_z };
+float inputs[18] = {pos_x, pos_y, pos_z,orient_1,orient_2,orient_3,orient_4,orient_5,orient_6,orient_7,orient_8,orient_9,vel_x,vel_y,vel_z,gyro_x,gyro_y,gyro_z};
 
 ///////////////////////////////////////////////USER DEFINED FCN///////////////////
 static inline int16_t saturateSignedInt16(float in) {
@@ -86,32 +92,53 @@ void serialParseMessageIn(void) {
   //Copy received buffer to structure
   memmove(&myserial_control_in, &serial_cf_msg_buf_in[1], sizeof(struct serial_control_in) - 1);
   // DEBUG_serial.write("Correct message received and storing\n");
-  //   DEBUG_serial.write("Stored pitch is %i\n", myserial_control_in.pitch);
+    // DEBUG_serial.write("Stored pitch is %i\n", myserial_control_in.pitch);
 }
 
 void setInputMessage(void) {
   // DEBUG_serial.printf("posx: %f\ngyrox: %f\n",myserial_control_in.pos_x, myserial_control_in.gyro_x);
-  // inputs[0]  = myserial_control_in.pos_x;
-  // inputs[1]  = myserial_control_in.pos_y;
-  // inputs[2]  = myserial_control_in.pos_z;
-  inputs[0] = 0.0f;
-  inputs[1] = 0.0f;
-  inputs[2] = 0.0f;
-  inputs[3]  = myserial_control_in.orient_1;
-  inputs[4]  = myserial_control_in.orient_2;
-  inputs[5]  = myserial_control_in.orient_3;
-  inputs[6]  = myserial_control_in.orient_4;
-  inputs[7]  = myserial_control_in.orient_5;
-  inputs[8]  = myserial_control_in.orient_6;
-  inputs[9]  = myserial_control_in.orient_7;
-  inputs[10] = myserial_control_in.orient_8;
-  inputs[11] = myserial_control_in.orient_9;
+  inputs[0]  = myserial_control_in.pos_x;
+  inputs[1]  = myserial_control_in.pos_y;
+  inputs[2]  = myserial_control_in.pos_z;
+  // inputs[2] = myserial_control_in.pos_z;
+  qw = myserial_control_in.qw;
+  qx = myserial_control_in.qx;
+  qy = myserial_control_in.qy;
+  qz = myserial_control_in.qz;
+  orient_1 = 1 - 2*qy*qy - 2*qz*qz; 
+  orient_2 = 2*qx*qy - 2*qw*qz;
+  orient_3 = 2*qx*qz + 2*qw*qy;
+  orient_4 = 2*qx*qy + 2*qw*qz;
+  orient_5 = 1 - 2*qx*qx - 2*qz*qz;
+  orient_6 = 2*qy*qz - 2*qw*qx;
+  orient_7 = 2*qx*qz - 2*qw*qy;
+  orient_8 = 2*qy*qz + 2*qw*qx;
+  orient_9 = 1 - 2*qx*qx - 2*qy*qy;
+  // rlt::set(observation, 0,  3 + 0, (1 - 2*qy*qy - 2*qz*qz));
+    // rlt::set(observation, 0,  3 + 1, (    2*qx*qy - 2*qw*qz));
+    // rlt::set(observation, 0,  3 + 2, (    2*qx*qz + 2*qw*qy));
+    // rlt::set(observation, 0,  3 + 3, (    2*qx*qy + 2*qw*qz));
+    // rlt::set(observation, 0,  3 + 4, (1 - 2*qx*qx - 2*qz*qz));
+    // rlt::set(observation, 0,  3 + 5, (    2*qy*qz - 2*qw*qx));
+    // rlt::set(observation, 0,  3 + 6, (    2*qx*qz - 2*qw*qy));
+    // rlt::set(observation, 0,  3 + 7, (    2*qy*qz + 2*qw*qx));
+    // rlt::set(observation, 0,  3 + 8, (1 - 2*qx*qx - 2*qy*qy));
+  inputs[3]  = orient_1;
+  inputs[4]  = orient_2;
+  inputs[5]  = orient_3;
+  inputs[6]  = orient_4;
+  inputs[7]  = orient_5;
+  inputs[8]  = orient_6;
+  inputs[9]  = orient_7;
+  inputs[10] = orient_8;
+  inputs[11] = orient_9;
   inputs[12] = myserial_control_in.vel_x;
   inputs[13] = myserial_control_in.vel_y;
   inputs[14] = myserial_control_in.vel_z;
-  inputs[15] = degrees_to_radians(myserial_control_in.gyro_x)/(180/M_PI);
-  inputs[16] = degrees_to_radians(myserial_control_in.gyro_y)/(180/M_PI);
-  inputs[17] = degrees_to_radians(myserial_control_in.gyro_z)/(180/M_PI);
+  // // inputs[14] = 0.0f;
+  inputs[15] = degrees_to_radians(myserial_control_in.gyro_x);
+  inputs[16] = degrees_to_radians(myserial_control_in.gyro_y);
+  inputs[17] = degrees_to_radians(myserial_control_in.gyro_z);
 
 
   // inputs = [gyro_x, gyro_y, gyro_z, acc_x, acc_y, acc_z, roll_target, pitch_target];
@@ -120,10 +147,11 @@ void setInputMessage(void) {
 }
 
 void setOutputMessage(void) {
-  myserial_control_out.motor_1 = controller.outtanh[0];
-  myserial_control_out.motor_2 = controller.outtanh[1];
-  myserial_control_out.motor_3 = controller.outtanh[2];
-  myserial_control_out.motor_4 = controller.outtanh[3];
+  myserial_control_out.motor_1 = min(max(-.2,controller.outtanh[0]),.9);
+  // myserial_control_out.motor_1 = .91;
+  myserial_control_out.motor_2 = min(max(-.2,controller.outtanh[1]),.9);
+  myserial_control_out.motor_3 = min(max(-.2,controller.outtanh[2]),.9);
+  myserial_control_out.motor_4 = min(max(-.2,controller.outtanh[3]),.9);
   
 }
 
@@ -218,16 +246,24 @@ void loop(void) {
   } else if (sending) {
     // Timer for debugging
     if (timer_count_main > 1000000) {
-      DEBUG_serial.printf("Received %i packets over last second\n", serial_cf_received_packets);
+      // DEBUG_serial.printf("Received %i packets over last second\n", serial_cf_received_packets);
       DEBUG_serial.printf("Processing network took %i ms for %i forward passes\n", timer_network_outer / 1000, n_forward_passes);
-      DEBUG_serial.printf("Amounts to %i per inference\n", timer_network_outer / n_forward_passes);
-      DEBUG_serial.printf("Receiving took %i ms for %i forward passes\n", timer_receive_outer / 1000, n_forward_passes);
-      DEBUG_serial.printf("Sending took %i ms for %i forward passes\n", timer_send_outer / 1000, n_forward_passes);
-      DEBUG_serial.printf("Last control output x:%f, y:%f, z:%f\n", myserial_control_out.motor_1, myserial_control_out.motor_2, myserial_control_out.motor_3);
-      DEBUG_serial.printf("CPU temp is %f\n", tempmonGetTemp());
-      // DEBUG_serial.printf("Low passed: %f, %f, %f, %f, \n", controller.out[0],controller.out[1],controller.out[2],controller.out[3]);
-      // DEBUG_serial.printf("raw passed: %f, %f, %f, %f, \n", controller.outtanh[0],controller.outtanh[1],controller.outtanh[2],controller.outtanh[3]);
+      DEBUG_serial.printf("We did %i forward passes\n", n_forward_passes);
 
+      // DEBUG_serial.printf("Amounts to %i per inference\n", timer_network_outer / n_forward_passes);
+      // DEBUG_serial.printf("Receiving took %i ms for %i forward passes\n", timer_receive_outer / 1000, n_forward_passes);
+      // DEBUG_serial.printf("Sending took %i ms for %i forward passes\n", timer_send_outer / 1000, n_forward_passes);
+      // DEBUG_serial.printf("Last control output x:%f, y:%f, z:%f\n", myserial_control_out.motor_1, myserial_control_out.motor_2, myserial_control_out.motor_3);
+      // DEBUG_serial.printf("CPU temp is %f\n", tempmonGetTemp());
+      // DEBUG_serial.printf("Low passed: %f, %f, %f, %f, \n", controller.out[0],controller.out[1],controller.out[2],controller.out[3]);
+      // // DEBUG_serial.printf("raw passed: %f, %f, %f, %f, \n", controller.outtanh[0],controller.outtanh[1],controller.outtanh[2],controller.outtanh[3]);
+
+      DEBUG_serial.printf("posx: %f, posy: %f, posz: %f\n", myserial_control_in.pos_x, myserial_control_in.pos_y, myserial_control_in.pos_z);
+      DEBUG_serial.printf("qw: %f, qx: %f, qy: %f, qz: %f\n", myserial_control_in.qw, myserial_control_in.qx, myserial_control_in.qy, myserial_control_in.qz);
+      DEBUG_serial.printf("velx: %f, vely: %f, velz: %f\n", myserial_control_in.vel_x, myserial_control_in.vel_y, myserial_control_in.vel_z);
+      DEBUG_serial.printf("gyrox: %f, gyroy: %f, gyroz: %f\n", myserial_control_in.gyro_x, myserial_control_in.gyro_y, myserial_control_in.gyro_z);
+      // // DEBUG_serial.printf("4: %f, 5: %f, 6: %f, \n", myserial_control_in.orient_4,myserial_control_in.orient_5,myserial_control_in.orient_6);
+      // // // DEBUG_serial.printf("7: %f, 8: %f, 9: %f, \n", myserial_control_in.orient_7,myserial_control_in.orient_8,myserial_control_in.orient_9);
       serial_cf_received_packets = 0;
       timer_count_main = 0;
       timer_network_outer = 0;
@@ -241,17 +277,29 @@ void loop(void) {
 
     // Reset network if thrust command is zero
     // TODO: Find better solution, otherwise network might be reset mid flight
-    if (myserial_control_in.warmUp == true) {
-     reset_network(&controller);
-   };
+    // if (myserial_control_in.warmUp == true) {
+  //    reset_network(&controller);
+  //  };
 
-    // Forward network
-    timer_network = 0;
-    forward_network(&controller);
-    // reset_network(&controller);
-    timer_network_outer = timer_network_outer + timer_network;
-    n_forward_passes++;
-    timer_network = 0;
+    // Forward network every 10 ms
+    // Get the current time
+    
+    // Check if 10 ms (10,000 microseconds) have passed
+  // if (timer_network >= networkInterval) {
+      timer_network = 0;  // Reset timer
+      forward_network(&controller);  // Run your 100 Hz function
+      timer_network_outer = timer_network_outer + timer_network;
+      n_forward_passes++;
+      timer_network = 0;
+    // }
+ 
+
+    // timer_network = 0;
+    // forward_network(&controller);
+    // // reset_network(&controller);
+    // timer_network_outer = timer_network_outer + timer_network;
+    // n_forward_passes++;
+    // timer_network = 0;
 
     // Send message via UART to CF
     timer_send = 0;

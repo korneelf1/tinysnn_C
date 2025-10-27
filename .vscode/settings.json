@@ -13,6 +13,11 @@
         "network.h": "c",
         "pid.h": "c",
         "test_proportional_enc_file.h": "c",
-        "test_proportional_conf.h": "c"
+        "test_proportional_conf.h": "c",
+        "teensydeck.h": "c",
+        "health.h": "c",
+        "collision_avoidance.h": "c",
+        "functional.h": "c",
+        "arm_math.h": "c"
     }
 }
