@@ -6,7 +6,7 @@
 // Switch between different controller versions by changing this define
 // Options: controller or controller_stable_1
 // #define CONTROLLER_DIR controller
-#define CONTROLLER_DIR controller_stable_1
+#define CONTROLLER_DIR controller_stable_2
 
 #define XSTR(s) STR(s)
 #define STR(s) #s
